@@ -156,6 +156,97 @@ def get_payment_url_keyboard(payment_url: str,
     return builder.as_markup()
 
 
+def get_yk_autopay_choice_keyboard(
+    months: int,
+    price: float,
+    lang: str,
+    i18n_instance,
+    has_saved_cards: bool = True,
+) -> InlineKeyboardMarkup:
+    """Keyboard for choosing between saved card charge or new card payment when auto-renew is enabled."""
+    _ = lambda key, **kwargs: i18n_instance.gettext(lang, key, **kwargs)
+    builder = InlineKeyboardBuilder()
+    price_str = str(price)
+    if has_saved_cards:
+        builder.row(
+            InlineKeyboardButton(
+                text=_(key="yookassa_autopay_pay_saved_card_button"),
+                callback_data=f"pay_yk_saved_list:{months}:{price_str}",
+            )
+        )
+    builder.row(
+        InlineKeyboardButton(
+            text=_(key="yookassa_autopay_pay_new_card_button"),
+            callback_data=f"pay_yk_new:{months}:{price_str}",
+        )
+    )
+    builder.row(
+        InlineKeyboardButton(
+            text=_(key="back_to_payment_methods_button"),
+            callback_data=f"subscribe_period:{months}",
+        )
+    )
+    return builder.as_markup()
+
+
+def get_yk_saved_cards_keyboard(
+    cards: List[Tuple[str, str]],
+    months: int,
+    price: float,
+    lang: str,
+    i18n_instance,
+    page: int = 0,
+) -> InlineKeyboardMarkup:
+    """Paginated keyboard for selecting a saved YooKassa card."""
+    _ = lambda key, **kwargs: i18n_instance.gettext(lang, key, **kwargs)
+    builder = InlineKeyboardBuilder()
+    per_page = 5
+    total = len(cards)
+    start = page * per_page
+    end = min(total, start + per_page)
+    price_str = str(price)
+
+    for method_id, title in cards[start:end]:
+        builder.row(
+            InlineKeyboardButton(
+                text=title,
+                callback_data=f"pay_yk_use_saved:{months}:{price_str}:{method_id}",
+            )
+        )
+
+    nav_buttons: List[InlineKeyboardButton] = []
+    if start > 0:
+        nav_buttons.append(
+            InlineKeyboardButton(
+                text="⬅️",
+                callback_data=f"pay_yk_saved_list:{months}:{price_str}:{page-1}",
+            )
+        )
+    if end < total:
+        nav_buttons.append(
+            InlineKeyboardButton(
+                text="➡️",
+                callback_data=f"pay_yk_saved_list:{months}:{price_str}:{page+1}",
+            )
+        )
+    if nav_buttons:
+        builder.row(*nav_buttons)
+
+    builder.row(
+        InlineKeyboardButton(
+            text=_(key="yookassa_autopay_pay_new_card_button"),
+            callback_data=f"pay_yk_new:{months}:{price_str}",
+        )
+    )
+    builder.row(
+        InlineKeyboardButton(
+            text=_(key="back_to_autopay_method_choice_button"),
+            callback_data=f"pay_yk:{months}:{price_str}",
+        )
+    )
+    return builder.as_markup()
+
+
 def get_referral_link_keyboard(lang: str,
                                i18n_instance) -> InlineKeyboardMarkup:
     _ = lambda key, **kwargs: i18n_instance.gettext(lang, key, **kwargs)
