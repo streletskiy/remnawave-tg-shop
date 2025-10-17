@@ -1,5 +1,10 @@
 {
   "welcome": "Welcome, {user_name}!",
+  "channel_subscription_required": "To use the bot, join the channel and tap \"Check subscription\".",
+  "channel_subscription_join_button": "Open channel",
+  "channel_subscription_verify_button": "Check subscription",
+  "channel_subscription_check_failed": "Couldn't verify the subscription. Please try again later or contact support.",
+  "channel_subscription_verified_success": "✅ Subscription confirmed! You're good to go.",
   "main_menu_greeting": "Hi, {user_name}! 👋\nWhat would you like to do?",
   "menu_activate_trial_button": "🆓 Free Trial",
   "menu_subscribe_inline": "🚀 Purchase",

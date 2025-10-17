@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     SUPPORT_LINK: Optional[str] = Field(default=None)
     SERVER_STATUS_URL: Optional[str] = Field(default=None)
     TERMS_OF_SERVICE_URL: Optional[str] = Field(default=None)
+    REQUIRED_CHANNEL_ID: Optional[int] = Field(
+        default=None,
+        description="Telegram channel ID the user must join to access the bot")
+    REQUIRED_CHANNEL_LINK: Optional[str] = Field(
+        default=None,
+        description="Public username or invite link to the required channel for join button")
 
     YOOKASSA_SHOP_ID: Optional[str] = None
     YOOKASSA_SECRET_KEY: Optional[str] = None
@@ -350,6 +356,13 @@ class Settings(BaseSettings):
     def validate_optional_int_fields(cls, v):
         """Convert empty strings to None for optional integer fields"""
         if isinstance(v, str) and v.strip() == '':
+            return None
+        return v
+
+    @field_validator('REQUIRED_CHANNEL_LINK', mode='before')
+    @classmethod
+    def sanitize_optional_link(cls, v):
+        if isinstance(v, str) and not v.strip():
             return None
         return v
     

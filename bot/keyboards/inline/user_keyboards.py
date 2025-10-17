@@ -286,6 +286,43 @@ def get_user_banned_keyboard(support_link: Optional[str], lang: str,
     return builder.as_markup()
 
 
+def get_channel_subscription_keyboard(
+        lang: str,
+        i18n_instance,
+        channel_link: Optional[str],
+        include_check_button: bool = True) -> Optional[InlineKeyboardMarkup]:
+    """
+    Return keyboard with buttons to open the required channel and trigger a subscription re-check.
+    """
+    if i18n_instance is None:
+        return None
+
+    _ = lambda key, **kwargs: i18n_instance.gettext(lang, key, **kwargs)
+    builder = InlineKeyboardBuilder()
+
+    has_buttons = False
+
+    if channel_link:
+        builder.button(
+            text=_(key="channel_subscription_join_button"),
+            url=channel_link,
+        )
+        has_buttons = True
+
+    if include_check_button:
+        builder.button(
+            text=_(key="channel_subscription_verify_button"),
+            callback_data="channel_subscription:verify",
+        )
+        has_buttons = True
+
+    if not has_buttons:
+        return None
+
+    builder.adjust(1)
+    return builder.as_markup()
+
+
 def get_connect_and_main_keyboard(
         lang: str,
         i18n_instance,
