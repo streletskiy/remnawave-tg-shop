@@ -246,52 +246,52 @@ async def start_command_handler(message: types.Message,
     # Send welcome message if not disabled
     if not settings.DISABLE_WELCOME_MESSAGE:
         await message.answer(_(key="welcome", user_name=hd.quote(user.full_name)))
-    
+
     # Auto-apply promo code if provided via start parameter
     if promo_code_to_apply:
         try:
             from bot.services.promo_code_service import PromoCodeService
             promo_code_service = PromoCodeService(settings, subscription_service, message.bot, i18n)
-            
+
             success, result = await promo_code_service.apply_promo_code(
                 session, user_id, promo_code_to_apply, current_lang
             )
-            
+
             if success:
                 await session.commit()
                 logging.info(f"Auto-applied promo code '{promo_code_to_apply}' for user {user_id}")
-                
+
                 # Get updated subscription details
                 active = await subscription_service.get_active_subscription_details(session, user_id)
                 config_link = active.get("config_link") if active else None
                 config_link = config_link or _("config_link_not_available")
-                
+
                 new_end_date = result if isinstance(result, datetime) else None
-                
+
                 promo_success_text = _(
                     "promo_code_applied_success_full",
                     end_date=(new_end_date.strftime("%d.%m.%Y %H:%M:%S") if new_end_date else "N/A"),
                     config_link=config_link,
                 )
-                
+
                 from bot.keyboards.inline.user_keyboards import get_connect_and_main_keyboard
                 await message.answer(
                     promo_success_text,
                     reply_markup=get_connect_and_main_keyboard(current_lang, i18n, settings, config_link),
                     parse_mode="HTML"
                 )
-                
+
                 # Don't show main menu if promo was successfully applied
                 return
             else:
                 await session.rollback()
                 logging.warning(f"Failed to auto-apply promo code '{promo_code_to_apply}' for user {user_id}: {result}")
                 # Continue to show main menu if promo failed
-                
+
         except Exception as e:
             logging.error(f"Error auto-applying promo code '{promo_code_to_apply}' for user {user_id}: {e}")
             await session.rollback()
-    
+
     await send_main_menu(message,
                          settings,
                          i18n_data,
@@ -404,8 +404,11 @@ async def main_action_callback_handler(
         await user_subscription_handlers.display_subscription_options(
             callback, i18n_data, settings, session)
     elif action == "my_subscription":
-
         await user_subscription_handlers.my_subscription_command_handler(
+            callback, i18n_data, settings, panel_service, subscription_service,
+            session, bot)
+    elif action == "my_devices":
+        await user_subscription_handlers.my_devices_command_handler(
             callback, i18n_data, settings, panel_service, subscription_service,
             session, bot)
     elif action == "referral":
