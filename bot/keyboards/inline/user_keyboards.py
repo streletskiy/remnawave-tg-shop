@@ -260,11 +260,16 @@ def get_referral_link_keyboard(lang: str,
 
 
 def get_back_to_main_menu_markup(lang: str,
-                                 i18n_instance) -> InlineKeyboardMarkup:
+                                 i18n_instance,
+                                 callback_data: Optional[str] = None) -> InlineKeyboardMarkup:
     _ = lambda key, **kwargs: i18n_instance.gettext(lang, key, **kwargs)
     builder = InlineKeyboardBuilder()
-    builder.button(text=_(key="back_to_main_menu_button"),
-                   callback_data="main_action:back_to_main")
+    if callback_data:
+        builder.button(text=_(key="back_to_main_menu_button"),
+                       callback_data=callback_data)
+    else:
+        builder.button(text=_(key="back_to_main_menu_button"),
+                       callback_data="main_action:back_to_main")
     return builder.as_markup()
 
 
