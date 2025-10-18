@@ -337,6 +337,7 @@ class PanelApiService:
             default_expire_days: int = 1,
             default_traffic_limit_bytes: int = 0,
             default_traffic_limit_strategy: str = "NO_RESET",
+            hwid_device_limit: Optional[int] = None,
             specific_squad_uuids: Optional[List[str]] = None,
             description: Optional[str] = None,
             tag: Optional[str] = None,
@@ -368,6 +369,18 @@ class PanelApiService:
             "trafficLimitStrategy": default_traffic_limit_strategy.upper(),
             "trafficLimitBytes": default_traffic_limit_bytes,
         }
+        hwid_limit_value = hwid_device_limit
+        if hwid_limit_value is None:
+            hwid_limit_value = self.settings.USER_HWID_DEVICE_LIMIT
+        if hwid_limit_value is not None:
+            try:
+                hwid_limit_int = int(hwid_limit_value)
+                if hwid_limit_int >= 0:
+                    payload["hwidDeviceLimit"] = hwid_limit_int
+            except (TypeError, ValueError):
+                logging.warning(
+                    f"Ignoring invalid HWID device limit '{hwid_limit_value}' while creating panel user '{username_on_panel}'."
+                )
         if specific_squad_uuids:
             payload["activeInternalSquads"] = specific_squad_uuids
         if telegram_id is not None: payload["telegramId"] = telegram_id

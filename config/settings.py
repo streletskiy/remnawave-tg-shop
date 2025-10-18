@@ -137,6 +137,15 @@ class Settings(BaseSettings):
 
     START_COMMAND_DESCRIPTION: Optional[str] = Field(default=None)
     DISABLE_WELCOME_MESSAGE: bool = Field(default=False, description="Disable welcome message on /start command")
+
+    MY_DEVICES_SECTION_ENABLED: bool = Field(
+        default=False,
+        description="Enable the My Devices section in the subscription menu"
+    )
+    USER_HWID_DEVICE_LIMIT: Optional[int] = Field(
+        default=None,
+        description="Default hardware device limit for panel users (0 = unlimited)"
+    )
     
     # Inline mode thumbnail URLs
     INLINE_REFERRAL_THUMBNAIL_URL: str = Field(default="https://cdn-icons-png.flaticon.com/512/1077/1077114.png")
@@ -364,6 +373,15 @@ class Settings(BaseSettings):
     def sanitize_optional_link(cls, v):
         if isinstance(v, str) and not v.strip():
             return None
+        return v
+    
+    @field_validator('USER_HWID_DEVICE_LIMIT', mode='before')
+    @classmethod
+    def validate_optional_int(cls, v):
+        if isinstance(v, str):
+            v = v.strip()
+            if not v:
+                return None
         return v
     
     # Notification types

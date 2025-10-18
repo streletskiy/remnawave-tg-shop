@@ -51,6 +51,8 @@
   "disconnect_device_button": "🚫 Disconnect {hwid} ({index})",
   "device_disconnected": "Device disconnected successfully.",
   "no_devices_found": "Error loading device list.",
+  "devices_unlimited_label": "Unlimited",
+  "my_devices_feature_disabled": "The My Devices section is currently unavailable.",
 
   "payment_description_subscription": "Subscription payment for {months} mo.",
   "payment_link_message": "To pay for {months} mo. subscription, click the button below:",
