@@ -10,7 +10,7 @@
   "menu_subscribe_inline": "💸 Purchase days / Donate",
   "menu_my_subscription_inline": "🚀 Connect / Info",
   "no_subscription_options_available": "Subscription issuance is not configured by the bot administrator",
-  "menu_referral_inline": "🎁 Referrals",
+  "menu_referral_inline": "🎁 Invite friend",
   "referral_no_bonuses_configured": "Sorry, the referral program is currently disabled",
   "menu_apply_promo_button": "🎟 Promo Code",
   "menu_language_settings_inline": "🌐 Language",
@@ -41,7 +41,7 @@
   "pay_with_cryptopay_button": "💎 CryptoBot",
   "pay_with_tribute_button": "❤️ Tribute",
   "pay_with_stars_button": "🌟 Telegram Stars",
-  "connect_button": "🔗 Connect",
+  "connect_button": "🔗 Connect / Setup app",
   "cancel_button": "❌ Cancel",
 
   "devices_button": "📱 My Devices ({current_devices}/{max_devices})",
