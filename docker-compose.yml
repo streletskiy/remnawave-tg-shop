@@ -1,7 +1,7 @@
 services:
   remnawave-tg-shop:
-    image: ghcr.io/machka-pasla/remnawave-tg-shop:latest
-#    build: .
+#    image: ghcr.io/machka-pasla/remnawave-tg-shop:latest
+    build: .
     container_name: remnawave-tg-shop
     hostname: remnawave-tg-shop
     env_file:
@@ -14,6 +14,8 @@ services:
     depends_on:
       remnawave-tg-shop-db:
         condition: service_healthy
+    ports:
+      - 8080:8080
 
   remnawave-tg-shop-db:
     image: postgres:17
