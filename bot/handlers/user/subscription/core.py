@@ -183,9 +183,38 @@ async def my_subscription_command_handler(
                         max_devices_display = str(max_devices_int)
                 except (TypeError, ValueError):
                     max_devices_display = str(max_devices_value)
+            current_devices_display = "?"
+            user_uuid = active.get("user_id")
+            devices_response = None
+            if user_uuid:
+                try:
+                    devices_response = await panel_service.get_user_devices(user_uuid)
+                except Exception:
+                    logging.exception("Failed to load devices for user %s", user_uuid)
+            if devices_response:
+                devices_count: Optional[int] = None
+                if isinstance(devices_response, dict):
+                    devices_list = devices_response.get("devices")
+                    if isinstance(devices_list, list):
+                        devices_count = len(devices_list)
+                    elif isinstance(devices_list, int):
+                        devices_count = devices_list
+                    else:
+                        try:
+                            devices_count = len(devices_list)  # type: ignore[arg-type]
+                        except Exception:
+                            devices_count = None
+                    if devices_count is None:
+                        total_value = devices_response.get("total")
+                        if isinstance(total_value, int):
+                            devices_count = total_value
+                elif isinstance(devices_response, list):
+                    devices_count = len(devices_response)
+                if devices_count is not None:
+                    current_devices_display = str(devices_count)
             devices_button_text = get_text(
                 "devices_button",
-                current_devices="?",
+                current_devices=current_devices_display,
                 max_devices=max_devices_display,
             )
             prepend_rows.append([
